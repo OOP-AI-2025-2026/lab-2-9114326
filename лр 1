@@ -1,0 +1,184 @@
+public class TimeSpan {
+    private int hours;
+    private int minutes;
+
+    // Конструктор
+    public TimeSpan(int hours, int minutes) {
+        if (hours < 0 || minutes < 0 || minutes > 59) {
+            throw new IllegalArgumentException();
+        }
+        this.hours = hours;
+        this.minutes = minutes;
+    }
+
+    // Повертає тільки години
+    public int getHours() {
+        return hours;
+    }
+
+    // Повертає тільки хвилини
+    public int getMinutes() {
+        return minutes;
+    }
+
+    // Додає години і хвилини
+    public void add(int hours, int minutes) {
+        if (hours < 0 || minutes < 0 || minutes > 59) {
+            throw new IllegalArgumentException();
+        }
+
+        int totalMinutes = this.hours * 60 + this.minutes;
+        totalMinutes += hours * 60 + minutes;
+
+        // нормалізуємо
+        this.hours = totalMinutes / 60;
+        this.minutes = totalMinutes % 60;
+    }
+
+    // Додає інший TimeSpan
+    public void addTimeSpan(TimeSpan span) {
+        add(span.getHours(), span.getMinutes());
+    }
+
+    // Повертає загальну кількість годин у вигляді дробу
+    public double getTotalHours() {
+        return hours + minutes / 60.0;
+    }
+
+    // Повертає загальну кількість хвилин
+    public int getTotalMinutes() {
+        return hours * 60 + minutes;
+    }
+
+    // Віднімання
+    public void subtract(TimeSpan span) {
+        int thisTotal = getTotalMinutes();
+        int otherTotal = span.getTotalMinutes();
+
+        if (otherTotal > thisTotal) {
+            throw new IllegalArgumentException("Cannot subtract bigger interval");
+        }
+
+        int newTotal = thisTotal - otherTotal;
+
+        this.hours = newTotal / 60;
+        this.minutes = newTotal % 60;
+    }
+
+    // Масштабування
+    public void scale(int factor) {
+        if (factor <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        int total = getTotalMinutes() * factor;
+        this.hours = total / 60;
+        this.minutes = total % 60;
+    }
+}
+Завдання 2
+public class BankAccount {
+    private String name;
+    private double balance;
+    private double transactionFee = 0; // нове поле
+
+    public BankAccount(String name, double balance) {
+        this.name = name;
+        this.balance = balance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setTransactionFee(double fee) {
+        if (fee < 0) throw new IllegalArgumentException();
+        this.transactionFee = fee;
+    }
+
+    // Поповнення
+    public void deposit(double amount) {
+        if (amount <= 0) return;
+        balance += amount;
+    }
+
+    // Зняття
+    public void withdraw(double amount) {
+        if (amount <= 0) return;
+
+        double total = amount + transactionFee;
+
+        if (balance >= total) {
+            balance -= total;
+        }
+    }
+
+    // Переказ
+    public void transfer(BankAccount receiver, double amount) {
+        if (amount <= 0) return;
+
+        double total = amount + transactionFee;
+
+        if (balance >= total) {
+            balance -= total;
+            receiver.balance += amount;
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+Завдання 3
+import java.util.ArrayList;
+
+public class Student {
+    private String name;
+    private int year; // 1..4
+    private ArrayList<String> courses = new ArrayList<>();
+
+    public Student(String name, int year) {
+        if (year < 1 || year > 4) throw new IllegalArgumentException();
+        this.name = name;
+        this.year = year;
+    }
+
+    public void addCourse(String courseName) {
+        courses.add(courseName);
+    }
+
+    public void dropAll() {
+        courses.clear();
+    }
+
+    public int getCourseCount() {
+        return courses.size();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    // 20000 грн за кожен рік
+    public int getTuition() {
+        return year * 20000;
+    }
+
+    // --- MAIN ---
+    public static void main(String[] args) {
+        Student st = new Student("Нікита", 2);
+
+        st.addCourse("Математика");
+        st.addCourse("Програмування");
+        st.addCourse("Фізика");
+
+        System.out.println(st.getName() + ": кількість вивчаємих дисциплін - " + st.getCourseCount());
+        System.out.println(st.getName() + ": рік навчання - " + st.getYear());
+        System.out.println(st.getName() + ": заплатив за навчання - " + st.getTuition());
+    }
+}
+
